@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Custom Paper Format for A5 Landscape -->
+    <record id="report_paperformat_a5_landscape" model="report.paperformat">
+        <field name="name">A5 Landscape</field>
+        <field name="default" eval="True"/>
+        <field name="format">A5</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">6</field>
+        <field name="margin_bottom">6</field>
+        <field name="margin_left">6</field>
+        <field name="margin_right">6</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+    <template id="report_ss_evoucher_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <style>
+                        table {
+                            border-collapse: collapse;
+                            width: 100%;
+                        }
+
+                        td {
+                            padding: 5px; 
+                            font-family: Calibri, sans-serif;
+                            font-size: 11.0pt;
+                            color: black;
+                            white-space: nowrap;
+                            border: 2px solid windowtext;
+                        }
+
+                        .header {
+                            font-size: 24.0pt;
+                            font-weight: 700;
+                            margin-bottom: 10px;
+                        }
+
+                        .label {
+                            text-align: left;
+                        }
+
+                        .center {
+                            text-align: center;
+                        }
+
+                        .right {
+                            text-align: right;
+                        }
+
+                        table.margin-top {
+                            margin-top: 20px;
+                        }
+
+                        td.no-border {
+                            border: 0px;
+                        }
+
+                        td.right:empty::before {
+                            content: '\00a0';
+                        }
+                        td.item { width: 40%; }
+                        td.salesman { width: 20%; }
+                        td.qty { width: 10%; }
+                        td.biaya { width: 15%; }
+                        td.jumlah { width: 15%; }
+                        td.tebal {font-weight: bold;}
+
+                        td.visit_id { width: 40%; }
+                        td.service_id { width: 40%; }
+
+                        td.no-border {
+                            border: 0px !important;
+                        }
+
+                    </style>
+                    <!-- <div class="header" style="margin-bottom:30px !important">Biaya Harian</div> -->
+                    <table>
+                        <tr>
+                            <td class="label tebal" style="border:none;" colspan="6">
+                                <span style="font-size:40px !important">
+                                    <t t-if="o.type == 'evoucher'">eVoucher</t>
+                                    <t t-if="o.type == 'biaya_harian'">Biaya Harian</t>
+                                </span>
+                                <span> OdooVersion</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label tebal no-border">Voucher ID</td>
+                            <td class="no-border" colspan="3">: 
+                                <t t-esc="o.name"/> <t t-if="o.revision != 0">(Rev_<t t-esc="o.revision"/>)</t>
+                            </td>
+                            <t t-if="o.type == 'evoucher'">
+                                <td class="label center tebal" colspan="4">Tanggal Cetak 
+                                    <t t-esc="o.date_print" />
+                                </td>
+                            </t>
+                            <t t-if="o.type == 'biaya_harian'">
+                                <td class="label center tebal" colspan="2">Tanggal Cetak 
+                                    <t t-esc="o.date_print" />
+                                </td>
+                            </t>
+                        </tr>
+                        <tr>
+                            <td class="label tebal no-border">User</td>
+                            <td class="no-border" colspan="3">: 
+                                <t t-esc="o.user_id.name"/>
+                            </td>
+                            <t t-if="o.type == 'evoucher'">
+                                <td class="right" rowspan="4" style="vertical-align: bottom;text-align:center;">Dibuat Oleh<br/><br/><br/><br/><br/>(...............)</td>
+                                <td class="right" rowspan="4" style="vertical-align: bottom;text-align:center;">Dperiksa Oleh<br/><br/><br/><br/><br/>(...............)</td>
+                                <td class="right" rowspan="4" style="vertical-align: bottom;text-align:center;">Disetujui Oleh<br/><br/><br/><br/><br/>(...............)</td>
+                                <td class="right" rowspan="4" style="vertical-align: bottom;text-align:center;">Diterima Oleh<br/><br/><br/><br/><br/>(...............)</td>
+                            </t>
+                            <t t-if="o.type == 'biaya_harian'">
+                                <td class="right" rowspan="4" style="vertical-align: bottom;text-align:center;">Dibuat Oleh<br/><br/><br/><br/><br/>(................................)</td>
+                                <td class="right" rowspan="4" style="vertical-align: bottom;text-align:center;">Disetujui Oleh<br/><br/><br/><br/><br/>(................................)</td>
+                            </t>
+                        </tr>
+                        <tr>
+                            <td class="label tebal no-border">
+                                <t t-if="o.type == 'biaya_harian'">No. Plat</t>
+                                <t t-if="o.type == 'evoucher'">Status</t>
+                            </td>
+                            <td class="no-border" colspan="3">
+                                <t t-if="o.type == 'biaya_harian'">: <t t-esc="o.no_police"/></t>
+                                <t t-if="o.type == 'evoucher'">: <t t-esc="o.status"/></t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label tebal no-border">
+                                <t t-if="o.type == 'biaya_harian'">Driver</t>
+                                <t t-if="o.type == 'evoucher'">Divisi</t>
+                            </td>
+                            <td class="no-border" colspan="3">
+                                <t t-if="o.type == 'biaya_harian'">: <t t-esc="o.driver.name"/></t>
+                                <t t-if="o.type == 'evoucher'">: <t t-esc="o.division_name"/></t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label tebal no-border">Keterangan</td>
+                            <td class="no-border" colspan="3">: 
+                                <t t-if="o.type == 'evoucher'"><t t-esc="o.information"/></t>
+                                <t t-if="o.type == 'biaya_harian'">Biaya Operasional Helper</t>
+                            </td>
+                        </tr>
+                    </table>
+                    <t t-if="o.type == 'biaya_harian'">
+                        <table class="margin-top">
+                            <tr>
+                                <td class="salesman tebal">Salesman</td>
+                                <td class="visit_id tebal">Visit</td>
+                                <td class="service_id tebal">Service</td>
+                                <td class="service_id tebal">Account</td>
+                                <td class="qty tebal">Qty</td>
+                                <td class="biaya tebal">Biaya</td>
+                                <td class="jumlah tebal">Jumlah</td>
+                            </tr>
+                            <t t-foreach="o.line_ids_biaya_harian" t-as="line">
+                                <tr>
+                                    <td class="salesman">
+                                        <t t-esc="line.salesman_id.name"/>
+                                    </td>
+                                    <td class="visit_id">
+                                        <t t-esc="line.visit_id.name"/>
+                                    </td>
+                                    <td class="service_id">
+                                        <t t-esc="line.service_id.name"/>
+                                    </td>
+                                    <td class="service_id">
+                                        
+                                    </td>
+                                    <td class="qty">
+                                        <t t-esc="line.qty"/>
+                                    </td>
+                                    <td class="biaya">
+                                        Rp <t t-esc="line.price"/>
+                                    </td>
+                                    <td class="jumlah">
+                                        Rp <t t-esc="line.subtotal"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td colspan="6" class="no-border right">Total :</td>
+                                <td class="jumlah no-border right">
+                                    Rp <t t-esc="o.total"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
+                    <t t-if="o.type == 'evoucher'">
+                        <table class="margin-top">
+                            <tr>
+                                <td class="item tebal">Item</td>
+                                <td class="qty tebal">Account</td>
+                                <td class="qty tebal">Qty</td>
+                                <td class="biaya tebal">Biaya</td>
+                                <td class="jumlah tebal">Jumlah</td>
+                            </tr>
+                            <t t-foreach="o.line_ids_evoucher" t-as="line">
+                                <tr>
+                                    <td class="item">
+                                        <t t-esc="line.item"/>
+                                    </td>
+                                    <td class="qty">
+                                        
+                                    </td>
+                                    <td class="qty">
+                                        <t t-esc="line.qty"/>
+                                    </td>
+                                    <td class="biaya">
+                                        Rp <t t-esc="line.price"/>
+                                    </td>
+                                    <td class="jumlah">
+                                        Rp <t t-esc="line.subtotal"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td colspan="4" class="no-border right">Total :</td>
+                                <td class="jumlah no-border right">
+                                    Rp <t t-esc="o.total"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
+                </div>
+            </t>
+        </t>
+    </template>
+    <record id="report_ss_evoucher" model="ir.actions.report">
+        <field name="name">Print eVoucher</field>
+        <field name="model">ss.evoucher</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bagus_evoucher.report_ss_evoucher_template</field>
+        <field name="report_file">bagus_evoucher.report_ss_evoucher_template</field>
+        <field name="print_report_name">'eVoucher - %s' % (object.name)</field>
+        <field name="paperformat_id" ref="report_paperformat_a5_landscape"/>
+    </record>
+</odoo>

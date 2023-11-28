@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ss_evoucher,ss_evoucher,model_ss_evoucher,,1,1,1,1
+access_ss_evoucher_line,ss_evoucher_line,model_ss_evoucher_line,,1,1,1,1
+access_ss_evoucher_line_visit,ss_evoucher_line_visit,model_ss_evoucher_line_visit,,1,1,1,1
+access_ss_evoucher_line_services,ss_evoucher_line_services,model_ss_evoucher_line_services,,1,1,1,1
+access_res_users_inherited,access_res_users_inherited,model_res_users,,1,1,1,1
+access_voucher_viewer_wizard,voucher.viewer.wizard,model_voucher_viewer_wizard,,1,1,1,1

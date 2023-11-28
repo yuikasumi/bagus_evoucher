@@ -1,0 +1,18 @@
+<odoo>
+    <record id="view_users_form_inherited" model="ir.ui.view">
+        <field name="name">res.users.form.inherited</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook/page[@name='access_rights']/group" position="after">
+                <group col="2" string="eVoucher">
+                    <field name="use_evoucher"/>
+                    <field name="type_evoucher"/>
+                    <field name="evoucher_view"/>
+                    <field name="evoucher_amount_type"/>
+                    <field name="approval_evoucher"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,20 @@
+{
+    'name': 'Bagus EVoucher',
+    'version': '1.0',
+    'summary': 'Modul untuk mengelola EVoucher',
+    'sequence': 10,
+    'description': """Modul custom untuk EVoucher""",
+    'category': 'Tools',
+    'website': 'https://www.example.com',
+    'depends': ['base','hr'],
+    'data': [
+        'views/ss_evoucher_views.xml',
+        'views/ss_evoucher_report.xml',
+        'views/res_users_views.xml',
+        'views/ss_evoucher_view_admin.xml',
+        'security/ir.model.access.csv',
+    ],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}

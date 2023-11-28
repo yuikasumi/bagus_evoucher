@@ -1,0 +1,43 @@
+<odoo>
+    <record id="view_voucher_viewer_wizard_form" model="ir.ui.view">
+        <field name="name">voucher.viewer.wizard.form</field>
+        <field name="model">voucher.viewer.wizard</field>
+        <field name="arch" type="xml">
+            <form string="View Voucher">
+                <div class="d-flex align-items-center my-2">
+                    <field name="name" nolabel="1" class="o_field_widget" placeholder="Voucher Name"/>
+                    <button string="View" type="object" name="action_view_voucher" class="btn-primary ml-2" style="padding: 2px 12px;
+    margin-top: -5px;"/>
+                </div>
+                <hr/>
+                <div class="oe_kanban_global_click" style="width: 100%;">
+                    <field name="image_content" widget="image" class="o_field_image" style="max-width: 100%; width: 100%;text-align: center;border: 1px solid;
+}"/>
+                </div>
+                <field name="is_voucher_valid" invisible="1"/>
+            <footer style="text-align:center">
+                <button string="Approve" type="object" name="action_approve_voucher" class="btn-primary"
+                        attrs="{'invisible': [('is_voucher_valid', '=', False)]}"/>
+                <button string="Reject" type="object" name="action_reject_voucher" class="btn-secondary"
+                        attrs="{'invisible': [('is_voucher_valid', '=', False)]}"/>
+                <!-- <button string="Cancel" class="btn-secondary" special="cancel"/> -->
+            </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- Sesuaikan id menu sesuai dengan struktur menu Anda -->
+    <record id="action_voucher_viewer_wizard" model="ir.actions.act_window">
+        <field name="name">Voucher Viewer</field>
+        <field name="res_model">voucher.viewer.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_voucher_viewer_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_voucher_viewer"
+              name="Voucher Viewer"
+              parent="menu_ss_evoucher"
+              action="action_voucher_viewer_wizard"/>
+</odoo>

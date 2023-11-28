@@ -1,0 +1,174 @@
+<odoo>
+    <data>
+        <!-- Tree View -->
+        <record id="view_ss_evoucher_tree" model="ir.ui.view">
+            <field name="name">ss.evoucher.tree</field>
+            <field name="model">ss.evoucher</field>
+            <field name="arch" type="xml">
+                <tree default_order="date desc">
+                    <field name="name"/>
+                    <field name="type" widget="badge" decoration-info="type == 'biaya_harian'" decoration-success="type == 'evoucher'"/>
+                    <field name="date"/>
+                    <field name="total"/>
+                    <field name="status" widget="badge" decoration-danger="status == 'draft'" decoration-info="status == 'confirmed'" decoration-success="status == 'done'"/>
+                    
+                    <field name="user_id" widget="many2one_avatar_user"/>
+                    <field name="approval" widget="many2one_avatar_user"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_ss_evoucher_form" model="ir.ui.view">
+            <field name="name">ss.evoucher.form</field>
+            <field name="model">ss.evoucher</field>
+            <field name="arch" type="xml">
+                <form string="eVoucher">
+                    <header>
+                        <button name="action_confirm" type="object" string="Confirm" class="btn-primary" attrs="{'invisible': [('status', '!=', 'draft')]}"/>
+
+                        <!-- Tombol Print Now muncul hanya ketika status 'confirmed' dan link_pdf '#'. -->
+                        <button type="object" name="action_print_now" string="Print Now" class="btn-primary" 
+                            attrs="{'invisible': ['|', ('status', '!=', 'confirmed'), ('link_pdf', '!=', '#')]}"/>    
+
+                        <!-- Tombol Print Now muncul hanya ketika status 'confirmed' dan link_pdf '#'. -->
+                        <button type="object" name="action_reprint" string="Re Print" class="btn-primary" 
+                            attrs="{'invisible': ['|', ('status', '!=', 'confirmed'), ('link_pdf', '=', '#')]}"/>
+
+                        <!-- Tombol Set as Done muncul hanya ketika status bukan 'done' atau 'cancel' dan link_pdf bukan '#'. -->
+                        <!-- <button name="action_done" type="object" string="Set as Done" class="btn-success" 
+                            attrs="{'invisible': ['|', ('status', '!=', 'confirmed'), ('link_pdf', '=', '#')]}"/>
+
+                        <button name="action_cancel" type="object" string="Cancel" class="btn-secondary" 
+                            attrs="{'invisible': [('status', '!=', 'done')]}"/> -->
+
+                        <!-- Statusbar for the 'status' field -->
+                        <field name="status" widget="statusbar"/>
+                    </header>
+
+
+                    <sheet>
+                        <group>
+                            <group colspan="2" attrs="{'invisible': ['|', ('status', '!=', 'confirmed'), ('link_pdf', '=', '#')]}">
+                                <div style="
+                                    text-align: center;
+                                    background: #f0f0f0;
+                                    border-radius: 8px;
+                                    border: 4px solid green;
+                                    padding-top: 10px;
+                                    padding-bottom: 10px;
+                                ">
+                                    <span style="
+                                        font-weight: bold;
+                                        font-size: larger;
+                                        font-style: italic;
+                                    ">Telah berhasil di Print</span>
+                                </div>
+                            </group>
+
+                            <group>
+                                <field name="name"/>
+                                <field name="type" attrs="{'readonly': [('line_ids_evoucher', '!=', []), ('line_ids_biaya_harian', '!=', [])]}"/>
+                                <field name="date" attrs="{'readonly': [('line_ids_evoucher', '!=', []), ('line_ids_biaya_harian', '!=', [])]}"/>
+                                <field name="user_id" />
+                                <field name="division" attrs="{'required': [('type', '=', 'evoucher')], 'invisible': [('type', '!=', 'evoucher')], 'readonly': [('status', '=', 'done')]}"/>
+                            </group>
+                            <group>
+                                <field name="driver" attrs="{'required': [('type', '=', 'biaya_harian')], 'invisible': [('type', '!=', 'biaya_harian')]}"/>
+                                <field name="license_plate" attrs="{'required': [('type', '=', 'biaya_harian')], 'invisible': [('type', '!=', 'biaya_harian')]}"/>
+
+                                <field name="information" attrs="{'required': [('type', '=', 'evoucher')], 'invisible': [('type', '!=', 'evoucher')], 'readonly': [('status', '=', 'done')]}"/>
+                                <field name="link_pdf" widget="url"/>
+                                <field name="date_print"/>
+                                <field name="revision"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Items">
+                                <field name="line_ids_evoucher" attrs="{'invisible': [('type', '!=', 'evoucher')], 'readonly': [('status', '=', 'done')]}">
+                                    <tree>
+                                        <field name="item"/>
+                                        <field name="amount_type"/>
+                                        <field name="qty"/>
+                                        <field name="price"/>
+                                        <field name="subtotal"/>
+                                    </tree>
+                                </field>
+
+                                <field name="line_ids_biaya_harian" attrs="{'invisible': [('type', '!=', 'biaya_harian')], 'readonly': [('status', '=', 'done')]}">
+                                    <tree>
+                                        <field name="salesman_id"/>
+                                        <field name="service_id"/>
+                                        <field name="visit_id"/>
+                                        <field name="qty"/>
+                                        <field name="price"/>
+                                        <field name="subtotal"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <!-- Layout for total, mirroring the quotation layout -->
+                        <group col="6" class="mt-2 mt-md-0">
+                            <group colspan="4">
+                                <!-- You can use this space for other fields or leave it blank -->
+                            </group>
+                            <group class="oe_subtotal_footer oe_right" colspan="2">
+                                <label for="total" string="Total"/>
+                                <field name="total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ss_evoucher_line_form" model="ir.ui.view">
+            <field name="name">ss.evoucher.line.form</field>
+            <field name="model">ss.evoucher.line</field>
+            <field name="arch" type="xml">
+                <form string="Line Detail">
+                    <group>
+
+                        <field name="salesman_id" options="{'no_create': True}" attrs="{'required': [('parent.type', '=', 'biaya_harian')], 'invisible': [('parent.type', '!=', 'biaya_harian')]}"/>
+                        <field name="visit_id" attrs="{'required': [('parent.type', '=', 'biaya_harian')], 'invisible': [('parent.type', '!=', 'biaya_harian')]}"/>
+                        <field name="service_id" attrs="{'required': [('parent.type', '=', 'biaya_harian')], 'invisible': [('parent.type', '!=', 'biaya_harian')]}"/>
+                        <field name="amount_type" attrs="{'required': [('parent.type', '=', 'evoucher')], 'invisible': [('parent.type', '!=', 'evoucher')]}"/>
+                        <field name="item" attrs="{'required': [('parent.type', '=', 'evoucher')], 'invisible': [('parent.type', '!=', 'evoucher')]}"/>
+                        <field name="qty" attrs="{'required': [('parent.type', '=', 'evoucher')]}"/>
+                        <field name="price" attrs="{'required': [('parent.type', '=', 'evoucher')]}"/>
+                        <field name="subtotal"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View with Filters -->
+        <record id="view_ss_evoucher_search" model="ir.ui.view">
+            <field name="name">ss.evoucher.search</field>
+            <field name="model">ss.evoucher</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter string="Exclude Cancel" name="filter_no_cancel" domain="[('status', '!=', 'cancel')]" help="Exclude records of type 'cancel'"/>
+                    <filter string="Status Done" name="filter_status_done" domain="[('status', '=', 'done')]" help="Show records with status 'done'"/>
+                    <filter string="Status Confirmed" name="filter_status_confirmed" domain="[('status', '=', 'confirmed')]" help="Show records with status 'Confirmed'"/>
+                    <!-- Tambahkan filter dan field pencarian lainnya di sini jika diperlukan -->
+                </search>
+            </field>
+        </record>
+
+        <!-- Action (Modify to include search view and default filters) -->
+        <record id="action_ss_evoucher" model="ir.actions.act_window">
+            <field name="name">SSF eVoucher</field>
+            <field name="res_model">ss.evoucher</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_ss_evoucher_search"/>
+            <field name="context">{'search_default_filter_status_confirmed': 1}</field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem id="menu_ss_evoucher" name="SS EVoucher" web_icon="bagus_evoucher,icon.png"
+                  action="action_ss_evoucher"/>
+
+        
+    </data>
+</odoo>
